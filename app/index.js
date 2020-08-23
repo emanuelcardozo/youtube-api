@@ -1,24 +1,40 @@
 require('dotenv').config()
-const { google } = require('googleapis')
-var service = google.youtube('v3')
+const express = require('express')
+const bodyParser = require('body-parser')
+const YoutubeAPI = require('./YoutubeAPI')
 
+const app = express()
+const port = process.env.PORT
 
-service.playlistItems.list({
-  key: process.env.YOUTUBE_TOKEN,
-  part: 'snippet',
-  playlistId: 'PLnQG9foyB8Jutbntyk8kJSg_mINeZf8cp'
-}).then((response) => {
-  console.log(response.data.items);
-}).catch((err) => {
-  console.log(err);
+app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.json())
+
+app.listen( port, ()=> {
+  console.log("Listening on port", port);
 })
 
-// service.playlists.list({
-//   key: process.env.YOUTUBE_TOKEN,
-//   part: 'snippet',
-//   channelId: 'UC26BqlSwTtpvz_-Lg5EZfKg'
-// }).then((response) => {
-//   console.log(response.data );
-// }).catch((err) => {
-//   console.log(err);
-// })
+app.get("/playlists", async (req, res) => {
+  const playlistsResponse = await YoutubeAPI.getPlaylistsFromChannel(req.body.channelId)
+  const playlists = playlistsResponse.items.map( (playlist) => {
+    return {
+      name: playlist.snippet.title,
+      id: playlist.id,
+      image: playlist.snippet.thumbnails.default.url
+    }
+  })
+  res.status(200).send(playlists)
+})
+
+app.get("/songs", async (req, res) => {
+  console.log(req.body);
+  const songsResponse = await YoutubeAPI.getSongsFromPlaylist(req.body.playlistId)
+  const songs = songsResponse.items.map( (song) => {
+    return {
+      name: song.snippet.title,
+      id: song.snippet.resourceId.videoId,
+      image: song.snippet.thumbnails.default.url
+    }
+  })
+
+  res.status(200).send(songs)
+})
