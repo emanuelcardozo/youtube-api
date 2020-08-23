@@ -3,24 +3,36 @@ var service = google.youtube('v3')
 
 module.exports = {
 
-  getSongsFromPlaylist: function( playlistId ) {
-    return service.playlistItems.list({
+  getSongsFromPlaylist: function( playlistId, nextPageToken=null ) {
+    const opt = {
       key: process.env.YOUTUBE_TOKEN,
       part: 'snippet',
       playlistId
-    }).then((response) => {
+    }
+
+    if(nextPageToken)
+      opt.pageToken = nextPageToken
+
+    return service.playlistItems.list(opt)
+    .then((response) => {
       return response.data
     }).catch((err) => {
       console.log(err);
     })
   },
 
-  getPlaylistsFromChannel: function( channelId ) {
-    return service.playlists.list({
+  getPlaylistsFromChannel: function( channelId, nextPageToken=null ) {
+    const opt = {
       key: process.env.YOUTUBE_TOKEN,
       part: 'snippet',
       channelId
-    }).then((response) => {
+    }
+
+    if(nextPageToken)
+      opt.pageToken = nextPageToken
+
+    return service.playlists.list(opt)
+    .then((response) => {
       return response.data
     }).catch((err) => {
       console.log(err);

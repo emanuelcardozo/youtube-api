@@ -8,6 +8,17 @@ const port = process.env.PORT
 
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json())
+app.use(function(req, res, next) {
+
+  res.header("Access-Control-Allow-Origin", "*");
+
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  next();
+
+});
+
+
 
 app.listen( port, ()=> {
   console.log("Listening on port", port);
@@ -26,8 +37,14 @@ app.get("/playlists", async (req, res) => {
 })
 
 app.get("/songs", async (req, res) => {
-  console.log(req.body);
   const songsResponse = await YoutubeAPI.getSongsFromPlaylist(req.body.playlistId)
+
+  while( songsResponse.nextPageToken ) {
+    const nextPageResponse = await YoutubeAPI.getSongsFromPlaylist(req.body.playlistId, songsResponse.nextPageToken)
+    songsResponse.items = songsResponse.items.concat( nextPageResponse.items )
+    songsResponse.nextPageToken = nextPageResponse.nextPageToken
+  }
+
   const songs = songsResponse.items.map( (song) => {
     return {
       name: song.snippet.title,
@@ -35,6 +52,8 @@ app.get("/songs", async (req, res) => {
       image: song.snippet.thumbnails.default.url
     }
   })
+
+  console.log(songs.length);
 
   res.status(200).send(songs)
 })
