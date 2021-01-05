@@ -2,9 +2,11 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const YoutubeAPI = require('./YoutubeAPI')
+const config = require('./config/config')
+const mongoose = require('mongoose')
 
 const app = express()
-const port = process.env.PORT
+const port = config.port
 
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json())
@@ -18,7 +20,9 @@ app.use(function(req, res, next) {
 
 });
 
-
+mongoose.connect( config.databaseURL, { useNewUrlParser: true, useUnifiedTopology: true },  ()=> {
+  console.log("mongo db connected!");
+})
 
 app.listen( port, ()=> {
   console.log("Listening on port", port);
