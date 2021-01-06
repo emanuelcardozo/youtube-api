@@ -13,8 +13,6 @@ if (process.env.NODE_ENV !== 'production') {
 const app = express()
 const port = config.port
 
-console.log(process.env.YOUTUBE_TOKEN);
-
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json())
 app.use(function(req, res, next) {
