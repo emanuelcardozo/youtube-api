@@ -13,6 +13,7 @@ router.post('/user', UserController.create);
 // post routes
 router.get('/device/:id', DeviceController.find);
 router.post('/device', DeviceController.create);
+router.get('/device', DeviceController.findByAndroidId);
 
 // Youtube Controller
 router.get('/youtubeAPI/songs', YoutubeController.getSongs);

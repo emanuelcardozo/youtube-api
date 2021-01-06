@@ -3,12 +3,7 @@ const Schema = mongoose.Schema
 
 const DeviceSchema = new Schema({
   model: String,
-  imei: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  serialNumber: {
+  androidId: {
     type: String,
     required: true,
     unique: true
