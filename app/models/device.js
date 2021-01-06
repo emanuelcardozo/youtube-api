@@ -7,6 +7,10 @@ const DeviceSchema = new Schema({
     type: String,
     required: true,
     unique: true
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }
 },
 {

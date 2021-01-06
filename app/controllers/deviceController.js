@@ -25,7 +25,7 @@ module.exports = {
     },
 
     findByAndroidId: async (req, res) => {
-      const { androidId } = req.params
+      const { androidId } = req.body
 
       Device.findOne({ androidId }).populate("user").exec((err, device) =>{
         if (err) return res.status(400).send(err)

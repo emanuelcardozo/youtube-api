@@ -4,16 +4,19 @@ const Device = require('../models/device');
 
 module.exports = {
     create: async (req, res) =>{
-      const { name, channelId, imei } = req.body;
-      const device = await Device.findOne({ imei })
+      const { name, channelId, androidId } = req.body;
+      const device = await Device.findOne({ androidId })
 
       User.create({
           name,
           channelId,
           lastLogin: Date.now(),
           device: device._id
-      }, function (err, user) {
+      }, async function (err, user) {
         if (err) return res.status(400).send(err)
+
+        device.user = user._id
+        await device.save()
 
         return res.status(201).send(user)
       })

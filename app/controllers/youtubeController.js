@@ -18,13 +18,10 @@ module.exports = {
         }
       })
 
-      console.log(songs.length);
-
       res.status(200).send(songs)
     },
 
     getPlaylists: async (req, res) => {
-      console.log(req.body);
       const playlistsResponse = await YoutubeAPI.getPlaylistsFromChannel(req.body.channelId)
       const playlists = playlistsResponse.items.map( (playlist) => {
         return {
