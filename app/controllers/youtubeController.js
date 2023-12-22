@@ -11,10 +11,11 @@ module.exports = {
       }
 
       const songs = songsResponse.items.map( (song) => {
+        console.log(song.snippet.thumbnails.default)
         return {
           name: song.snippet.title,
           id: song.snippet.resourceId.videoId,
-          image: song.snippet.thumbnails.default.url
+          image: song.snippet.thumbnails.default?.url
         }
       })
 
