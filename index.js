@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 
 const routes = require('./app/routes')
@@ -27,9 +27,9 @@ app.use(function(req, res, next) {
 
 app.use(routes);
 
-mongoose.connect( config.databaseURL, { useNewUrlParser: true, useUnifiedTopology: true },  ()=> {
-  console.log("mongo db connected!");
-})
+// mongoose.connect( config.databaseURL, { useNewUrlParser: true, useUnifiedTopology: true },  ()=> {
+//   console.log("mongo db connected!");
+// })
 
 app.listen( port, () => {
   console.log("Listening on port", port);
