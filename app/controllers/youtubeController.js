@@ -2,16 +2,18 @@ const YoutubeAPI = require('../YoutubeAPI')
 
 module.exports = {
     getSongs: async (req, res) => {
-      const songsResponse = await YoutubeAPI.getSongsFromPlaylist(req.body.playlistId)
+      const playlistId = req.body.playlistId || req.query.playlistId
+      const songsResponse = await YoutubeAPI.getSongsFromPlaylist(playlistId)
 
       while( songsResponse.nextPageToken ) {
-        const nextPageResponse = await YoutubeAPI.getSongsFromPlaylist(req.body.playlistId, songsResponse.nextPageToken)
+        const nextPageResponse = await YoutubeAPI.getSongsFromPlaylist(playlistId, songsResponse.nextPageToken)
         songsResponse.items = songsResponse.items.concat( nextPageResponse.items )
         songsResponse.nextPageToken = nextPageResponse.nextPageToken
       }
 
+      console.log(songsResponse.items[0].snippet)
+
       const songs = songsResponse.items.map( (song) => {
-        console.log(song.snippet.thumbnails.default)
         return {
           name: song.snippet.title,
           id: song.snippet.resourceId.videoId,
@@ -23,14 +25,27 @@ module.exports = {
     },
 
     getPlaylists: async (req, res) => {
-      const playlistsResponse = await YoutubeAPI.getPlaylistsFromChannel(req.body.channelId)
+      const channelId = req.body.channelId || req.query.channelId
+      const playlistsResponse = await YoutubeAPI.getPlaylistsFromChannel(channelId)      
+
+      while( playlistsResponse.nextPageToken ) {
+        const nextPageResponse = await YoutubeAPI.getPlaylistsFromChannel(channelId, playlistsResponse.nextPageToken)
+        playlistsResponse.items = playlistsResponse.items.concat( nextPageResponse.items )
+        playlistsResponse.nextPageToken = nextPageResponse.nextPageToken
+      }
+
+      console.log(playlistsResponse.items[0].snippet)
+
       const playlists = playlistsResponse.items.map( (playlist) => {
         return {
-          name: playlist.snippet.title,
           id: playlist.id,
-          image: playlist.snippet.thumbnails.default.url
+          name: playlist.snippet.title,
+          description: playlist.snippet.description,
+          image: playlist.snippet.thumbnails.default.url,
+          publishedAt: playlist.snippet.publishedAt,
         }
       })
+
       res.status(200).send(playlists)
     }
 }

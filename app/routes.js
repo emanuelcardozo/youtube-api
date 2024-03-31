@@ -6,6 +6,8 @@ const YoutubeController = require('./controllers/youtubeController');
 
 router.get('/',(req,res)=>res.send('ok'));
 
+router.get('/login',(req,res)=>res.send('ok'));
+
 // UserController routes
 router.get('/user/:id', UserController.find);
 router.post('/user', UserController.create);
